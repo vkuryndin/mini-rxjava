@@ -1,5 +1,6 @@
 package org.example.minirx.integration;
 
+import org.example.minirx.core.Emitter;
 import org.example.minirx.core.Observable;
 import org.example.minirx.core.Observer;
 import org.junit.jupiter.api.Test;
@@ -39,9 +40,7 @@ public class BoundaryAndRobustnessTest {
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
 
-        Observable<Integer> observable = Observable.create(emitter -> {
-            emitter.onComplete();
-        });
+        Observable<Integer> observable = Observable.create(Emitter::onComplete);
 
         observable.subscribe(new Observer<>() {
             @Override
@@ -74,7 +73,7 @@ public class BoundaryAndRobustnessTest {
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             emitter.onNext(1);
             emitter.onNext(2);
             emitter.onNext(3);
@@ -114,7 +113,7 @@ public class BoundaryAndRobustnessTest {
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             emitter.onNext(1);
             emitter.onNext(2);
             emitter.onNext(3);
@@ -122,9 +121,7 @@ public class BoundaryAndRobustnessTest {
         });
 
         observable
-                .flatMap((Integer number) -> Observable.<Integer>create(innerEmitter -> {
-                    innerEmitter.onComplete();
-                }))
+                .flatMap((Integer number) -> Observable.<Integer>create(Emitter::onComplete))
                 .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
@@ -152,9 +149,7 @@ public class BoundaryAndRobustnessTest {
      */
     @Test
     void shouldRejectNullObserverInSubscribe() {
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
-            emitter.onComplete();
-        });
+        Observable<Integer> observable = Observable.create(Emitter::onComplete);
 
         assertThrows(NullPointerException.class, () -> observable.subscribe(null));
     }
@@ -164,9 +159,7 @@ public class BoundaryAndRobustnessTest {
      */
     @Test
     void shouldRejectNullMapper() {
-        Observable<Integer> observable = Observable.create(emitter -> {
-            emitter.onComplete();
-        });
+        Observable<Integer> observable = Observable.create(Emitter::onComplete);
 
         assertThrows(NullPointerException.class, () -> observable.map(null));
     }
@@ -176,9 +169,7 @@ public class BoundaryAndRobustnessTest {
      */
     @Test
     void shouldRejectNullPredicate() {
-        Observable<Integer> observable = Observable.create(emitter -> {
-            emitter.onComplete();
-        });
+        Observable<Integer> observable = Observable.create(Emitter::onComplete);
 
         assertThrows(NullPointerException.class, () -> observable.filter(null));
     }
@@ -188,9 +179,7 @@ public class BoundaryAndRobustnessTest {
      */
     @Test
     void shouldRejectNullFlatMapMapper() {
-        Observable<Integer> observable = Observable.create(emitter -> {
-            emitter.onComplete();
-        });
+        Observable<Integer> observable = Observable.create(Emitter::onComplete);
 
         assertThrows(NullPointerException.class, () -> observable.flatMap(null));
     }
@@ -241,9 +230,7 @@ public class BoundaryAndRobustnessTest {
     void shouldNotCrashOutwardWhenObserverOnErrorThrows() {
         AtomicBoolean errorCallbackEntered = new AtomicBoolean(false);
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
-            emitter.onError(new RuntimeException("Source failure"));
-        });
+        Observable<Integer> observable = Observable.create(emitter -> emitter.onError(new RuntimeException("Source failure")));
 
         assertDoesNotThrow(() ->
                 observable.subscribe(new Observer<>() {

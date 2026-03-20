@@ -9,11 +9,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests error propagation and terminal-state behavior.
@@ -76,9 +72,7 @@ public class ErrorHandlingTest {
         AtomicReference<Throwable> error = new AtomicReference<>();
         AtomicBoolean completed = new AtomicBoolean(false);
 
-        Observable<Integer> observable = Observable.create(emitter -> {
-            emitter.onError(null);
-        });
+        Observable<Integer> observable = Observable.create(emitter -> emitter.onError(null));
 
         observable.subscribe(new Observer<>() {
             @Override
@@ -173,6 +167,6 @@ public class ErrorHandlingTest {
 
         assertEquals(List.of("A", "B"), receivedItems);
         assertTrue(completed.get());
-        assertEquals(null, error.get());
+        assertNull(error.get());
     }
 }

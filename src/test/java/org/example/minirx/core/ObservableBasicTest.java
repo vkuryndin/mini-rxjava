@@ -42,7 +42,7 @@ public class ObservableBasicTest {
             emitter.onComplete();
         });
 
-        observable.subscribe(new Observer<Integer>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 receivedItems.add(item);

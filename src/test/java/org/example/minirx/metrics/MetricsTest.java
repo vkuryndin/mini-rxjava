@@ -13,9 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Collects basic functional and timing metrics for the educational Mini RxJava
@@ -215,7 +213,7 @@ public class MetricsTest {
 
         assertEquals(List.of(1, 2, 3), receivedItems);
         assertTrue(completed.get());
-        assertEquals(null, error.get());
+        assertNull(error.get());
         assertNotNull(sourceThread.get());
         assertNotNull(observerThread.get());
         assertTrue(sourceThread.get().startsWith("mini-rx-io-"));
