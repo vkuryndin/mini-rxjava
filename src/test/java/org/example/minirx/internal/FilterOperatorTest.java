@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests the filter operator.
@@ -45,7 +46,7 @@ public class FilterOperatorTest {
 
         observable
                 .filter(number -> number % 2 == 0)
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -64,7 +65,7 @@ public class FilterOperatorTest {
 
         assertEquals(List.of(2, 4), receivedItems);
         assertTrue(completed.get());
-        assertFalse(error.get() != null);
+        assertNull(error.get());
     }
 
     /**
@@ -91,7 +92,7 @@ public class FilterOperatorTest {
                     }
                     return number % 2 != 0;
                 })
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);

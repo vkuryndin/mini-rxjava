@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests the map operator.
@@ -44,7 +45,7 @@ public class MapOperatorTest {
 
         observable
                 .map(number -> number * 10)
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -63,7 +64,7 @@ public class MapOperatorTest {
 
         assertEquals(List.of(10, 20, 30), receivedItems);
         assertTrue(completed.get());
-        assertFalse(error.get() != null);
+        assertNull(error.get());
     }
 
     /**
@@ -90,7 +91,7 @@ public class MapOperatorTest {
                     }
                     return number * 10;
                 })
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);

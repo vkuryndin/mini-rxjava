@@ -125,7 +125,7 @@ public class SchedulerTest {
 
         observable
                 .subscribeOn(new IOThreadScheduler())
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         observerThreadName.set(Thread.currentThread().getName());
@@ -172,7 +172,7 @@ public class SchedulerTest {
 
         observable
                 .observeOn(new SingleThreadScheduler())
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         if (firstObservedThreadName.get() == null) {
@@ -219,7 +219,7 @@ public class SchedulerTest {
         observable
                 .subscribeOn(new IOThreadScheduler())
                 .observeOn(new SingleThreadScheduler())
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         observedThreadName.set(Thread.currentThread().getName());

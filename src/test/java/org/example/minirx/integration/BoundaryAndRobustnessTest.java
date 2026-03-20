@@ -39,11 +39,11 @@ public class BoundaryAndRobustnessTest {
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             emitter.onComplete();
         });
 
-        observable.subscribe(new Observer<Integer>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 receivedItems.add(item);
@@ -83,7 +83,7 @@ public class BoundaryAndRobustnessTest {
 
         observable
                 .filter((Integer number) -> false)
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -125,7 +125,7 @@ public class BoundaryAndRobustnessTest {
                 .flatMap((Integer number) -> Observable.<Integer>create(innerEmitter -> {
                     innerEmitter.onComplete();
                 }))
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -164,7 +164,7 @@ public class BoundaryAndRobustnessTest {
      */
     @Test
     void shouldRejectNullMapper() {
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             emitter.onComplete();
         });
 
@@ -176,7 +176,7 @@ public class BoundaryAndRobustnessTest {
      */
     @Test
     void shouldRejectNullPredicate() {
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             emitter.onComplete();
         });
 
@@ -188,7 +188,7 @@ public class BoundaryAndRobustnessTest {
      */
     @Test
     void shouldRejectNullFlatMapMapper() {
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             emitter.onComplete();
         });
 
@@ -204,14 +204,14 @@ public class BoundaryAndRobustnessTest {
         AtomicReference<Throwable> error = new AtomicReference<>();
         AtomicBoolean completed = new AtomicBoolean(false);
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             emitter.onNext(1);
             emitter.onNext(2);
             emitter.onComplete();
         });
 
         assertDoesNotThrow(() ->
-                observable.subscribe(new Observer<Integer>() {
+                observable.subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         throw new IllegalStateException("Observer onNext failure");
@@ -246,7 +246,7 @@ public class BoundaryAndRobustnessTest {
         });
 
         assertDoesNotThrow(() ->
-                observable.subscribe(new Observer<Integer>() {
+                observable.subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         // No-op.

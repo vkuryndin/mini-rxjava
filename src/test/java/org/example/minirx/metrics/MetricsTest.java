@@ -90,7 +90,7 @@ public class MetricsTest {
                             emitter.onNext(4);
                             emitter.onComplete();
                         })
-                        .flatMap((Integer number) -> Observable.<Integer>create(innerEmitter -> {
+                        .flatMap((Integer number) -> Observable.create(innerEmitter -> {
                             innerEmitter.onNext(number);
                             innerEmitter.onNext(number * 10);
                             innerEmitter.onComplete();
@@ -105,7 +105,7 @@ public class MetricsTest {
                             emitter.onNext(4);
                             emitter.onComplete();
                         })
-                        .flatMap((Integer number) -> io.reactivex.rxjava3.core.Observable.<Integer>create(innerEmitter -> {
+                        .flatMap((Integer number) -> io.reactivex.rxjava3.core.Observable.create(innerEmitter -> {
                             innerEmitter.onNext(number);
                             innerEmitter.onNext(number * 10);
                             innerEmitter.onComplete();
@@ -176,7 +176,7 @@ public class MetricsTest {
 
         long startNanos = System.nanoTime();
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             sourceThread.set(Thread.currentThread().getName());
             emitter.onNext(1);
             emitter.onNext(2);
@@ -187,7 +187,7 @@ public class MetricsTest {
         observable
                 .subscribeOn(new IOThreadScheduler())
                 .observeOn(new SingleThreadScheduler())
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         if (observerThread.get() == null) {
@@ -249,7 +249,7 @@ public class MetricsTest {
 
         long startNanos = System.nanoTime();
 
-        observable.subscribe(new Observer<T>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(T item) {
                 items.add(item);

@@ -44,7 +44,7 @@ public class ErrorHandlingTest {
             emitter.onComplete();
         });
 
-        observable.subscribe(new Observer<Integer>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 receivedItems.add(item);
@@ -80,7 +80,7 @@ public class ErrorHandlingTest {
             emitter.onError(null);
         });
 
-        observable.subscribe(new Observer<Integer>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 // No-op.
@@ -116,7 +116,7 @@ public class ErrorHandlingTest {
             emitter.onError(new RuntimeException("Broken stream"));
         });
 
-        observable.subscribe(new Observer<String>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(String item) {
                 // No-op.
@@ -154,7 +154,7 @@ public class ErrorHandlingTest {
             emitter.onComplete();
         });
 
-        observable.subscribe(new Observer<String>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(String item) {
                 receivedItems.add(item);

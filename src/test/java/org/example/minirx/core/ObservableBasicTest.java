@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests basic observable behavior.
@@ -60,7 +61,7 @@ public class ObservableBasicTest {
 
         assertEquals(List.of(1, 2, 3), receivedItems);
         assertTrue(completed.get());
-        assertFalse(error.get() != null);
+        assertNull(error.get());
     }
 
     /**
@@ -78,7 +79,7 @@ public class ObservableBasicTest {
             throw new RuntimeException("Source failure");
         });
 
-        observable.subscribe(new Observer<Integer>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 receivedItems.add(item);
@@ -117,7 +118,7 @@ public class ObservableBasicTest {
             emitter.onNext(3);
         });
 
-        observable.subscribe(new Observer<Integer>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 receivedItems.add(item);
@@ -136,6 +137,6 @@ public class ObservableBasicTest {
 
         assertEquals(List.of(1), receivedItems);
         assertTrue(completed.get());
-        assertFalse(error.get() != null);
+        assertNull(error.get());
     }
 }

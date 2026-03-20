@@ -83,7 +83,7 @@ public class StressComparisonTest {
                             }
                             emitter.onComplete();
                         })
-                        .flatMap((Integer number) -> Observable.<Integer>create(innerEmitter -> {
+                        .flatMap((Integer number) -> Observable.create(innerEmitter -> {
                             innerEmitter.onNext(number);
                             innerEmitter.onNext(number * 10);
                             innerEmitter.onNext(number * 100);
@@ -98,7 +98,7 @@ public class StressComparisonTest {
                             }
                             emitter.onComplete();
                         })
-                        .flatMap((Integer number) -> io.reactivex.rxjava3.core.Observable.<Integer>create(innerEmitter -> {
+                        .flatMap((Integer number) -> io.reactivex.rxjava3.core.Observable.create(innerEmitter -> {
                             innerEmitter.onNext(number);
                             innerEmitter.onNext(number * 10);
                             innerEmitter.onNext(number * 100);
@@ -161,7 +161,7 @@ public class StressComparisonTest {
 
         long startNanos = System.nanoTime();
 
-        observable.subscribe(new Observer<T>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(T item) {
                 items.add(item);
@@ -229,7 +229,7 @@ public class StressComparisonTest {
 
         long startNanos = System.nanoTime();
 
-        observable.subscribe(new Observer<T>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(T item) {
                 if (firstObservedThread.get() == null) {

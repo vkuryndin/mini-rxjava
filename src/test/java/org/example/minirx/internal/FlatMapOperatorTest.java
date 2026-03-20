@@ -51,7 +51,7 @@ public class FlatMapOperatorTest {
                     innerEmitter.onNext(number * 10);
                     innerEmitter.onComplete();
                 }))
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -101,7 +101,7 @@ public class FlatMapOperatorTest {
                         innerEmitter.onComplete();
                     });
                 })
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -151,7 +151,7 @@ public class FlatMapOperatorTest {
 
                     innerEmitter.onComplete();
                 }))
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -196,7 +196,7 @@ public class FlatMapOperatorTest {
                     innerEmitter.onNext(letter + "2");
                     innerEmitter.onComplete();
                 }))
-                .subscribe(new Observer<String>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(String item) {
                         receivedItems.add(item);

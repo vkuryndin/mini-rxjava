@@ -67,7 +67,7 @@ public class DisposableTest {
 
         final Disposable[] disposableHolder = new Disposable[1];
 
-        disposableHolder[0] = observable.subscribe(new Observer<Integer>() {
+        disposableHolder[0] = observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 receivedItems.add(item);
@@ -108,7 +108,7 @@ public class DisposableTest {
             // No signals are emitted in this test.
         });
 
-        Disposable disposable = observable.subscribe(new Observer<Integer>() {
+        Disposable disposable = observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 // No-op.
@@ -137,7 +137,7 @@ public class DisposableTest {
             // No signals are emitted in this test.
         });
 
-        Disposable disposable = observable.subscribe(new Observer<Integer>() {
+        Disposable disposable = observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 // No-op.

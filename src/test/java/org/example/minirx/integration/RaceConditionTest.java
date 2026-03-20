@@ -52,7 +52,7 @@ public class RaceConditionTest {
         AtomicReference<Throwable> error = new AtomicReference<>();
         CountDownLatch latch = new CountDownLatch(1);
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             for (int i = 1; i <= itemCount; i++) {
                 emitter.onNext(i);
             }
@@ -68,7 +68,7 @@ public class RaceConditionTest {
                     worker.setDaemon(true);
                     worker.start();
                 }))
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -113,7 +113,7 @@ public class RaceConditionTest {
         AtomicReference<Throwable> error = new AtomicReference<>();
         CountDownLatch latch = new CountDownLatch(1);
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             for (int i = 1; i <= itemCount; i++) {
                 emitter.onNext(i);
             }
@@ -129,7 +129,7 @@ public class RaceConditionTest {
                     worker.setDaemon(true);
                     worker.start();
                 }))
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         // No-op.
@@ -176,7 +176,7 @@ public class RaceConditionTest {
         AtomicReference<Throwable> error = new AtomicReference<>();
         CountDownLatch latch = new CountDownLatch(1);
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             for (int i = 1; i <= itemCount; i++) {
                 emitter.onNext(i);
             }
@@ -185,7 +185,7 @@ public class RaceConditionTest {
 
         observable
                 .observeOn(new SingleThreadScheduler())
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         receivedItems.add(item);
@@ -224,7 +224,7 @@ public class RaceConditionTest {
         AtomicBoolean completed = new AtomicBoolean(false);
         CountDownLatch firstHundredLatch = new CountDownLatch(1);
 
-        Observable<Integer> observable = Observable.<Integer>create(emitter -> {
+        Observable<Integer> observable = Observable.create(emitter -> {
             Thread worker = new Thread(() -> {
                 for (int i = 1; i <= 10_000; i++) {
                     if (emitter.isDisposed()) {
@@ -243,7 +243,7 @@ public class RaceConditionTest {
 
         final Disposable[] disposableHolder = new Disposable[1];
 
-        disposableHolder[0] = observable.subscribe(new Observer<Integer>() {
+        disposableHolder[0] = observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 receivedItems.add(item);
@@ -270,7 +270,7 @@ public class RaceConditionTest {
         Thread.sleep(300);
 
         assertTrue(disposableHolder[0].isDisposed());
-        assertFalse(error.get() != null);
+        assertNull(error.get());
         assertFalse(completed.get());
         assertTrue(receivedItems.size() >= 100);
         assertTrue(receivedItems.size() < 10_000);

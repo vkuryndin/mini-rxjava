@@ -32,7 +32,7 @@ public class RxJavaComparisonTest {
     @Test
     void shouldMatchRxJavaForSimpleCreate() {
         ComparisonResult<Integer> miniRxResult = collectFromMiniRx(
-                Observable.<Integer>create(emitter -> {
+                Observable.create(emitter -> {
                     emitter.onNext(1);
                     emitter.onNext(2);
                     emitter.onNext(3);
@@ -41,7 +41,7 @@ public class RxJavaComparisonTest {
         );
 
         ComparisonResult<Integer> rxJavaResult = collectFromRxJava(
-                io.reactivex.rxjava3.core.Observable.<Integer>create(emitter -> {
+                io.reactivex.rxjava3.core.Observable.create(emitter -> {
                     emitter.onNext(1);
                     emitter.onNext(2);
                     emitter.onNext(3);
@@ -118,7 +118,7 @@ public class RxJavaComparisonTest {
                     emitter.onNext(2);
                     emitter.onNext(3);
                     emitter.onComplete();
-                }).flatMap((Integer number) -> Observable.<Integer>create(innerEmitter -> {
+                }).flatMap((Integer number) -> Observable.create(innerEmitter -> {
                     innerEmitter.onNext(number);
                     innerEmitter.onNext(number * 10);
                     innerEmitter.onComplete();
@@ -131,7 +131,7 @@ public class RxJavaComparisonTest {
                     emitter.onNext(2);
                     emitter.onNext(3);
                     emitter.onComplete();
-                }).flatMap((Integer number) -> io.reactivex.rxjava3.core.Observable.<Integer>create(innerEmitter -> {
+                }).flatMap((Integer number) -> io.reactivex.rxjava3.core.Observable.create(innerEmitter -> {
                     innerEmitter.onNext(number);
                     innerEmitter.onNext(number * 10);
                     innerEmitter.onComplete();
@@ -147,14 +147,14 @@ public class RxJavaComparisonTest {
     @Test
     void shouldMatchRxJavaForSourceError() {
         ComparisonResult<Integer> miniRxResult = collectFromMiniRx(
-                Observable.<Integer>create(emitter -> {
+                Observable.create(emitter -> {
                     emitter.onNext(1);
                     throw new RuntimeException("Source failure");
                 })
         );
 
         ComparisonResult<Integer> rxJavaResult = collectFromRxJava(
-                io.reactivex.rxjava3.core.Observable.<Integer>create(emitter -> {
+                io.reactivex.rxjava3.core.Observable.create(emitter -> {
                     emitter.onNext(1);
                     throw new RuntimeException("Source failure");
                 })
@@ -209,7 +209,7 @@ public class RxJavaComparisonTest {
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
 
-        observable.subscribe(new Observer<T>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(T item) {
                 items.add(item);
