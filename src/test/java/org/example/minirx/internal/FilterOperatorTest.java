@@ -1,4 +1,4 @@
-package org.example.minirx;
+package org.example.minirx.internal;
 
 import org.example.minirx.core.Observable;
 import org.example.minirx.core.Observer;
@@ -15,22 +15,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests the map operator.
+ * Tests the filter operator.
  *
  * <p>This class verifies:
  * <ul>
- *     <li>item transformation with {@code map(...)}</li>
- *     <li>successful completion after mapping</li>
- *     <li>error propagation when the mapper fails</li>
+ *     <li>item selection with {@code filter(...)}</li>
+ *     <li>successful completion after filtering</li>
+ *     <li>error propagation when the predicate fails</li>
  * </ul>
  */
-public class MapOperatorTest {
+public class FilterOperatorTest {
 
     /**
-     * Verifies that the map operator transforms all items correctly.
+     * Verifies that the filter operator passes only matching items.
      */
     @Test
-    void shouldTransformItemsWithMap() {
+    void shouldPassOnlyMatchingItems() {
         List<Integer> receivedItems = new ArrayList<>();
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
@@ -39,11 +39,12 @@ public class MapOperatorTest {
             emitter.onNext(1);
             emitter.onNext(2);
             emitter.onNext(3);
+            emitter.onNext(4);
             emitter.onComplete();
         });
 
         observable
-                .map(number -> number * 10)
+                .filter(number -> number % 2 == 0)
                 .subscribe(new Observer<Integer>() {
                     @Override
                     public void onNext(Integer item) {
@@ -61,17 +62,17 @@ public class MapOperatorTest {
                     }
                 });
 
-        assertEquals(List.of(10, 20, 30), receivedItems);
+        assertEquals(List.of(2, 4), receivedItems);
         assertTrue(completed.get());
         assertFalse(error.get() != null);
     }
 
     /**
-     * Verifies that an exception thrown inside the mapper
+     * Verifies that an exception thrown inside the predicate
      * is forwarded to {@code onError(...)}.
      */
     @Test
-    void shouldForwardMapperErrorToObserver() {
+    void shouldForwardPredicateErrorToObserver() {
         List<Integer> receivedItems = new ArrayList<>();
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
@@ -84,11 +85,11 @@ public class MapOperatorTest {
         });
 
         observable
-                .map(number -> {
+                .filter(number -> {
                     if (number == 2) {
-                        throw new IllegalStateException("Map failure");
+                        throw new IllegalArgumentException("Filter failure");
                     }
-                    return number * 10;
+                    return number % 2 != 0;
                 })
                 .subscribe(new Observer<Integer>() {
                     @Override
@@ -107,9 +108,9 @@ public class MapOperatorTest {
                     }
                 });
 
-        assertEquals(List.of(10), receivedItems);
+        assertEquals(List.of(1), receivedItems);
         assertFalse(completed.get());
         assertNotNull(error.get());
-        assertEquals("Map failure", error.get().getMessage());
+        assertEquals("Filter failure", error.get().getMessage());
     }
 }

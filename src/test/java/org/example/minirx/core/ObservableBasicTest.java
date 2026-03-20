@@ -1,7 +1,5 @@
-package org.example.minirx;
+package org.example.minirx.core;
 
-import org.example.minirx.core.Observable;
-import org.example.minirx.core.Observer;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

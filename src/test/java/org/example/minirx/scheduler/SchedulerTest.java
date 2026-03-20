@@ -1,11 +1,7 @@
-package org.example.minirx;
+package org.example.minirx.scheduler;
 
 import org.example.minirx.core.Observable;
 import org.example.minirx.core.Observer;
-import org.example.minirx.scheduler.ComputationScheduler;
-import org.example.minirx.scheduler.IOThreadScheduler;
-import org.example.minirx.scheduler.Scheduler;
-import org.example.minirx.scheduler.SingleThreadScheduler;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

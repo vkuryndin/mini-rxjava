@@ -1,4 +1,4 @@
-package org.example.minirx;
+package org.example.minirx.metrics;
 
 import org.example.minirx.core.Observable;
 import org.example.minirx.core.Observer;
