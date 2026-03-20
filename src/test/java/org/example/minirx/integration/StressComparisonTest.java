@@ -277,7 +277,7 @@ public class StressComparisonTest {
 
         long startNanos = System.nanoTime();
 
-        observable.subscribe(
+        io.reactivex.rxjava3.disposables.Disposable ignored = observable.subscribe(
                 item -> {
                     if (firstObservedThread.get() == null) {
                         firstObservedThread.set(Thread.currentThread().getName());

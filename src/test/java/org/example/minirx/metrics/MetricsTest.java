@@ -285,7 +285,7 @@ public class MetricsTest {
 
         long startNanos = System.nanoTime();
 
-        observable.subscribe(
+        io.reactivex.rxjava3.disposables.Disposable ignored = observable.subscribe(
                 items::add,
                 error::set,
                 () -> completed.set(true)

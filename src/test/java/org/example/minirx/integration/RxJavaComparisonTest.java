@@ -241,7 +241,7 @@ public class RxJavaComparisonTest {
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
 
-        observable.subscribe(
+        io.reactivex.rxjava3.disposables.Disposable ignored = observable.subscribe(
                 items::add,
                 error::set,
                 () -> completed.set(true)
