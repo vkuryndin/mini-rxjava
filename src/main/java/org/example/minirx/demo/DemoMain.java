@@ -7,32 +7,21 @@ import org.example.minirx.scheduler.IOThreadScheduler;
 import org.example.minirx.scheduler.SingleThreadScheduler;
 
 /**
- * Demonstrates basic usage of the Mini RxJava library.
+ * Small set of examples for the Mini RxJava API.
  *
- * <p>This class contains simple examples of:
- * <ul>
- *     <li>successful stream completion,</li>
- *     <li>error handling,</li>
- *     <li>subscription cancellation with {@link Disposable},</li>
- *     <li>data transformation with {@code map(...)},</li>
- *     <li>data filtering with {@code filter(...)},</li>
- *     <li>stream expansion with {@code flatMap(...)},</li>
- *     <li>subscription scheduling with {@code subscribeOn(...)},</li>
- *     <li>observer scheduling with {@code observeOn(...)}.</li>
- * </ul>
- *
- * <p>The asynchronous examples use sleeps only for demo visibility.
+ * <p>The demos show normal completion, error handling, disposal,
+ * basic operators, and simple scheduling.
  */
 public final class DemoMain {
 
     /**
-     * Prevents creating utility class instances.
+     * Utility class.
      */
     private DemoMain() {
     }
 
     /**
-     * Runs all demonstration examples.
+     * Runs all demo scenarios.
      *
      * @param args command-line arguments
      */
@@ -49,7 +38,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates a simple successful stream.
+     * Example of a source that completes normally.
      */
     private static void demoSuccessfulStream() {
         System.out.println("=== Demo 1: Successful stream ===");
@@ -61,7 +50,7 @@ public final class DemoMain {
             emitter.onComplete();
         });
 
-        observable.subscribe(new Observer<Integer>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 System.out.println("Received item: " + item);
@@ -82,7 +71,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates stream termination with an error.
+     * Example of a source that finishes with an error.
      */
     private static void demoStreamWithError() {
         System.out.println("=== Demo 2: Stream with error ===");
@@ -92,7 +81,7 @@ public final class DemoMain {
             throw new RuntimeException("Something went wrong in the source");
         });
 
-        observable.subscribe(new Observer<String>() {
+        observable.subscribe(new Observer<>() {
             @Override
             public void onNext(String item) {
                 System.out.println("Received item: " + item);
@@ -113,7 +102,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates cancellation of a running stream.
+     * Example showing subscription disposal during execution.
      */
     private static void demoDispose() {
         System.out.println("=== Demo 3: Dispose subscription ===");
@@ -136,7 +125,7 @@ public final class DemoMain {
             worker.start();
         });
 
-        Disposable disposable = observable.subscribe(new Observer<Integer>() {
+        Disposable disposable = observable.subscribe(new Observer<>() {
             @Override
             public void onNext(Integer item) {
                 System.out.println("Received item: " + item);
@@ -162,7 +151,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates the map operator.
+     * Example of the map operator.
      */
     private static void demoMapOperator() {
         System.out.println("=== Demo 4: Map operator ===");
@@ -176,7 +165,7 @@ public final class DemoMain {
 
         observable
                 .map(number -> number * 10)
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         System.out.println("Mapped item: " + item);
@@ -197,7 +186,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates the filter operator.
+     * Example of the filter operator.
      */
     private static void demoFilterOperator() {
         System.out.println("=== Demo 5: Filter operator ===");
@@ -213,7 +202,7 @@ public final class DemoMain {
 
         observable
                 .filter(number -> number % 2 == 0)
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         System.out.println("Filtered item: " + item);
@@ -234,7 +223,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates chaining of map and filter operators.
+     * Example of chaining map and filter.
      */
     private static void demoMapAndFilterChain() {
         System.out.println("=== Demo 6: Map + Filter chain ===");
@@ -250,7 +239,7 @@ public final class DemoMain {
         observable
                 .map(number -> number * 10)
                 .filter(number -> number > 20)
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         System.out.println("Chained item: " + item);
@@ -271,7 +260,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates the flatMap operator.
+     * Example of the flatMap operator.
      */
     private static void demoFlatMapOperator() {
         System.out.println("=== Demo 7: FlatMap operator ===");
@@ -289,7 +278,7 @@ public final class DemoMain {
                     innerEmitter.onNext(number * 10);
                     innerEmitter.onComplete();
                 }))
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         System.out.println("FlatMapped item: " + item);
@@ -310,7 +299,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates the subscribeOn operator.
+     * Example of subscribeOn.
      */
     private static void demoSubscribeOn() {
         System.out.println("=== Demo 8: subscribeOn ===");
@@ -324,7 +313,7 @@ public final class DemoMain {
 
         observable
                 .subscribeOn(new IOThreadScheduler())
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         System.out.println("Observer received " + item + " on thread: "
@@ -347,7 +336,7 @@ public final class DemoMain {
     }
 
     /**
-     * Demonstrates the observeOn operator.
+     * Example of observeOn.
      */
     private static void demoObserveOn() {
         System.out.println("=== Demo 9: observeOn ===");
@@ -362,7 +351,7 @@ public final class DemoMain {
 
         observable
                 .observeOn(new SingleThreadScheduler())
-                .subscribe(new Observer<Integer>() {
+                .subscribe(new Observer<>() {
                     @Override
                     public void onNext(Integer item) {
                         System.out.println("Observed item " + item + " on thread: "
@@ -385,9 +374,9 @@ public final class DemoMain {
     }
 
     /**
-     * Pauses the current thread for the given number of milliseconds.
+     * Sleeps for the specified number of milliseconds.
      *
-     * @param millis the pause duration in milliseconds
+     * @param millis sleep duration in milliseconds
      */
     private static void sleep(long millis) {
         try {

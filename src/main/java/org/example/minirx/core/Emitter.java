@@ -1,34 +1,32 @@
 package org.example.minirx.core;
 
 /**
- * Sends events from an {@link Observable} source to an {@link Observer}.
+ * Pushes signals from a source to an {@link Observer}.
  *
- * <p>An emitter is used inside {@code Observable.create(...)} to push items,
- * signal errors, or complete the stream.
+ * <p>An emitter is available inside {@code Observable.create(...)}.
+ * It can send items, report an error, complete the stream, and expose
+ * the current subscription state through {@link Disposable}.
  *
- * <p>This interface also extends {@link Disposable} so the source can check
- * whether the subscription is still active.
- *
- * @param <T> the type of emitted items
+ * @param <T> type of emitted items
  */
 public interface Emitter<T> extends Disposable {
 
     /**
-     * Emits the next item to the observer.
+     * Sends the next item downstream.
      *
-     * @param item the item to emit
+     * @param item item to emit
      */
     void onNext(T item);
 
     /**
-     * Signals an error and terminates the stream.
+     * Terminates the stream with an error.
      *
-     * @param throwable the error to signal
+     * @param throwable error to deliver
      */
     void onError(Throwable throwable);
 
     /**
-     * Signals successful completion and terminates the stream.
+     * Completes the stream normally.
      */
     void onComplete();
 }

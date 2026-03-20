@@ -6,49 +6,38 @@ import org.example.minirx.core.Observer;
 import java.util.Objects;
 
 /**
- * Basic {@link Emitter} implementation used by {@code Observable.create(...)}.
+ * Default {@link Emitter} used by {@code Observable.create(...)}.
  *
- * <p>This emitter delivers signals to the target observer and keeps track
- * of the subscription state. It prevents event delivery after:
- * <ul>
- *     <li>the stream has completed,</li>
- *     <li>the stream has failed with an error,</li>
- *     <li>the subscription has been disposed.</li>
- * </ul>
+ * <p>The emitter forwards signals to the target observer and tracks whether
+ * the stream has already reached a terminal state or has been disposed.
  *
- * @param <T> the type of emitted items
+ * @param <T> type of emitted items
  */
 public final class CreateEmitter<T> extends BooleanDisposable implements Emitter<T> {
 
     /**
-     * The target observer that receives events.
+     * Observer that receives emitted signals.
      */
     private final Observer<? super T> observer;
 
     /**
-     * Shows whether the stream has already reached a terminal state.
-     *
-     * <p>A terminal state means either {@code onError(...)} or
-     * {@code onComplete()} has already been called.
+     * Shows whether a terminal signal has already been sent.
      */
     private boolean terminated;
 
     /**
-     * Creates a new emitter for the given observer.
+     * Creates an emitter for the given observer.
      *
-     * @param observer the observer that will receive events
+     * @param observer target observer
      */
     public CreateEmitter(Observer<? super T> observer) {
         this.observer = Objects.requireNonNull(observer, "observer must not be null");
     }
 
     /**
-     * Emits the next item to the observer if the stream is still active.
+     * Sends the next item if the subscription is still active.
      *
-     * <p>If the stream has already been disposed or terminated,
-     * the item is ignored.
-     *
-     * @param item the item to emit
+     * @param item item to emit
      */
     @Override
     public void onNext(T item) {
@@ -60,15 +49,12 @@ public final class CreateEmitter<T> extends BooleanDisposable implements Emitter
     }
 
     /**
-     * Signals an error to the observer and terminates the stream.
+     * Sends an error and closes the stream.
      *
-     * <p>If the stream has already been disposed or terminated,
-     * the error is ignored.
+     * <p>If {@code throwable} is {@code null}, a
+     * {@link NullPointerException} is sent instead.
      *
-     * <p>If the provided throwable is {@code null}, it is replaced with
-     * a {@link NullPointerException}.
-     *
-     * @param throwable the error to signal
+     * @param throwable error to deliver
      */
     @Override
     public void onError(Throwable throwable) {
@@ -84,10 +70,7 @@ public final class CreateEmitter<T> extends BooleanDisposable implements Emitter
     }
 
     /**
-     * Signals successful completion and terminates the stream.
-     *
-     * <p>If the stream has already been disposed or terminated,
-     * the completion signal is ignored.
+     * Completes the stream if it is still active.
      */
     @Override
     public void onComplete() {

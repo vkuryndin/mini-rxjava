@@ -5,26 +5,22 @@ import org.example.minirx.core.Disposable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * A simple {@link Disposable} implementation based on {@link AtomicBoolean}.
+ * Basic {@link Disposable} implementation backed by {@link AtomicBoolean}.
  *
- * <p>This class stores the disposal state and allows it to be checked safely.
- * It is useful as a base class for emitters and other subscription-related
- * components.
- *
- * <p>Once disposed, the state cannot become active again.
+ * <p>Used as a small reusable base for components that need to store
+ * disposal state.
  */
 public class BooleanDisposable implements Disposable {
 
     /**
-     * Stores the current disposal state.
+     * Current disposal state.
      */
     private final AtomicBoolean disposed = new AtomicBoolean(false);
 
     /**
-     * Marks this disposable as disposed.
+     * Marks this instance as disposed.
      *
-     * <p>This method is idempotent, which means calling it multiple times
-     * has the same effect as calling it once.
+     * <p>This operation is idempotent.
      */
     @Override
     public void dispose() {
@@ -32,9 +28,9 @@ public class BooleanDisposable implements Disposable {
     }
 
     /**
-     * Returns whether this disposable has already been disposed.
+     * Returns the current disposal state.
      *
-     * @return {@code true} if disposed, otherwise {@code false}
+     * @return {@code true} if already disposed
      */
     @Override
     public boolean isDisposed() {

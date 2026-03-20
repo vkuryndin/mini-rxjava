@@ -1,20 +1,20 @@
 package org.example.minirx.core;
 
 /**
- * Contains the subscription logic for an {@link Observable}.
+ * Describes what an {@link Observable} should do after subscription.
  *
- * <p>This functional interface is used by {@link Observable#create(ObservableOnSubscribe)}
- * to describe what should happen when an observer subscribes.
+ * <p>The implementation receives an {@link Emitter} and uses it to send
+ * items, report an error, or finish the stream.
  *
- * @param <T> the type of emitted items
+ * @param <T> type of emitted items
  */
 @FunctionalInterface
 public interface ObservableOnSubscribe<T> {
 
     /**
-     * Runs the source logic and emits events through the given emitter.
+     * Starts the source logic for a new subscription.
      *
-     * @param emitter the emitter used to send events to the observer
+     * @param emitter emitter used to send signals downstream
      */
     void subscribe(Emitter<T> emitter);
 }

@@ -5,18 +5,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Scheduler that executes all tasks on a single dedicated thread.
+ * Scheduler that runs all tasks on one dedicated thread.
  *
- * <p>This scheduler is useful when tasks must be executed sequentially
- * and in a predictable order.
- *
- * <p>Threads are created as daemon threads so they do not prevent the JVM
- * from shutting down in demo and test scenarios.
+ * <p>Useful when task order matters and work should be processed
+ * sequentially.
  */
 public class SingleThreadScheduler implements Scheduler {
 
     /**
-     * Executor used to run scheduled tasks.
+     * Executor used for scheduled tasks.
      */
     private final ExecutorService executor = Executors.newSingleThreadExecutor(task -> {
         Thread thread = new Thread(task);
@@ -26,9 +23,9 @@ public class SingleThreadScheduler implements Scheduler {
     });
 
     /**
-     * Schedules the given task on the single worker thread.
+     * Schedules a task on the single worker thread.
      *
-     * @param task the task to execute
+     * @param task task to execute
      */
     @Override
     public void execute(Runnable task) {

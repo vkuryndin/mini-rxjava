@@ -9,50 +9,46 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Represents a reactive source of items.
+ * Main reactive source type in the project.
  *
- * <p>An observable does not usually store the emitted items directly.
- * Instead, it stores the subscription logic that describes what should
- * happen when an observer subscribes.
+ * <p>An {@code Observable} keeps the subscription logic instead of storing
+ * items in advance. When a subscriber appears, that logic is executed and
+ * pushes signals through an {@link Emitter}.
  *
- * <p>The source logic is represented by {@link ObservableOnSubscribe}.
- * It receives an {@link Emitter} and uses it to emit items, signal errors,
- * or complete the stream.
- *
- * @param <T> the type of emitted items
+ * @param <T> type of emitted items
  */
 public class Observable<T> {
 
     /**
-     * Contains the logic that should run when someone subscribes.
+     * Logic executed for each new subscriber.
      */
     private final ObservableOnSubscribe<T> source;
 
     /**
-     * Creates a new observable with the given source logic.
+     * Creates an observable with the given source logic.
      *
-     * @param source the source logic of this observable
+     * @param source source callback
      */
     public Observable(ObservableOnSubscribe<T> source) {
         this.source = Objects.requireNonNull(source, "source must not be null");
     }
 
     /**
-     * Creates a new observable from the given source logic.
+     * Factory method for creating an observable.
      *
-     * @param source the source logic to execute when subscribed
-     * @param <T> the type of emitted items
-     * @return a new observable instance
+     * @param source source callback to run on subscription
+     * @param <T> type of emitted items
+     * @return new observable instance
      */
     public static <T> Observable<T> create(ObservableOnSubscribe<T> source) {
         return new Observable<>(source);
     }
 
     /**
-     * Subscribes the given observer to this observable.
+     * Subscribes the given observer to this source.
      *
-     * @param observer the observer that will receive items, errors, and completion
-     * @return a disposable that allows cancelling the subscription
+     * @param observer observer that will receive signals
+     * @return disposable handle for the subscription
      */
     public Disposable subscribe(Observer<? super T> observer) {
         Objects.requireNonNull(observer, "observer must not be null");
@@ -69,17 +65,17 @@ public class Observable<T> {
     }
 
     /**
-     * Transforms each emitted item using the given mapper function.
+     * Applies a mapping function to each emitted item.
      *
-     * @param mapper the function used to transform items
-     * @param <R> the type of items emitted by the resulting observable
-     * @return a new observable that emits mapped items
+     * @param mapper mapping function
+     * @param <R> type of items produced by the resulting observable
+     * @return observable with mapped items
      */
     public <R> Observable<R> map(Function<? super T, ? extends R> mapper) {
         Objects.requireNonNull(mapper, "mapper must not be null");
 
         return Observable.create(emitter ->
-                Observable.this.subscribe(new Observer<T>() {
+                Observable.this.subscribe(new Observer<>() {
                     @Override
                     public void onNext(T item) {
                         if (emitter.isDisposed()) {
@@ -112,16 +108,16 @@ public class Observable<T> {
     }
 
     /**
-     * Emits only those items that match the given predicate.
+     * Lets through only items that match the predicate.
      *
-     * @param predicate the condition used to decide whether an item should pass
-     * @return a new observable that emits only matching items
+     * @param predicate filter condition
+     * @return observable that emits only accepted items
      */
     public Observable<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate must not be null");
 
         return Observable.create(emitter ->
-                Observable.this.subscribe(new Observer<T>() {
+                Observable.this.subscribe(new Observer<>() {
                     @Override
                     public void onNext(T item) {
                         if (emitter.isDisposed()) {
@@ -156,22 +152,14 @@ public class Observable<T> {
     }
 
     /**
-     * Transforms each emitted item into a new observable and merges
-     * all inner observables into one resulting stream.
+     * Maps each item to an inner observable and merges their output.
      *
-     * <p>For every item from the current observable, the mapper returns
-     * an inner observable. This operator subscribes to those inner observables
-     * and forwards their items downstream.
+     * <p>The resulting stream is completed only after the outer source and all
+     * currently active inner sources have completed.
      *
-     * <p>The resulting stream completes only when:
-     * <ul>
-     *     <li>the outer observable completes, and</li>
-     *     <li>all inner observables also complete.</li>
-     * </ul>
-     *
-     * @param mapper the function that converts each item into an inner observable
-     * @param <R> the type of items emitted by inner observables
-     * @return a new observable that emits items from all inner observables
+     * @param mapper function that creates an inner observable for each item
+     * @param <R> type emitted by inner observables
+     * @return merged observable
      */
     public <R> Observable<R> flatMap(Function<? super T, Observable<R>> mapper) {
         Objects.requireNonNull(mapper, "mapper must not be null");
@@ -179,7 +167,7 @@ public class Observable<T> {
         return Observable.create(emitter -> {
             AtomicInteger activeSources = new AtomicInteger(1);
 
-            Observable.this.subscribe(new Observer<T>() {
+            Observable.this.subscribe(new Observer<>() {
                 @Override
                 public void onNext(T item) {
                     if (emitter.isDisposed()) {
@@ -200,7 +188,7 @@ public class Observable<T> {
 
                     activeSources.incrementAndGet();
 
-                    innerObservable.subscribe(new Observer<R>() {
+                    innerObservable.subscribe(new Observer<>() {
                         @Override
                         public void onNext(R innerItem) {
                             if (emitter.isDisposed()) {
@@ -240,13 +228,12 @@ public class Observable<T> {
     }
 
     /**
-     * Schedules the subscription and source execution on the given scheduler.
+     * Runs subscription and upstream execution on the given scheduler.
      *
-     * <p>In this educational implementation, the entire upstream subscription
-     * is started inside the scheduler task.
+     * <p>Here the whole upstream subscription starts inside the scheduled task.
      *
-     * @param scheduler the scheduler used to run the subscription
-     * @return a new observable that subscribes on the given scheduler
+     * @param scheduler scheduler used for subscription
+     * @return observable with scheduled subscription
      */
     public Observable<T> subscribeOn(Scheduler scheduler) {
         Objects.requireNonNull(scheduler, "scheduler must not be null");
@@ -257,7 +244,7 @@ public class Observable<T> {
                         return;
                     }
 
-                    Observable.this.subscribe(new Observer<T>() {
+                    Observable.this.subscribe(new Observer<>() {
                         @Override
                         public void onNext(T item) {
                             if (emitter.isDisposed()) {
@@ -282,22 +269,19 @@ public class Observable<T> {
     }
 
     /**
-     * Schedules downstream observer notifications on the given scheduler.
+     * Delivers downstream signals on the given scheduler.
      *
-     * <p>In this educational implementation, each signal is submitted
-     * as a separate scheduler task.
+     * <p>In this implementation each signal is submitted as a separate task.
+     * For stable ordering, a single-thread scheduler is the safest option.
      *
-     * <p>For the most predictable event order, prefer using
-     * {@code SingleThreadScheduler} with this operator.
-     *
-     * @param scheduler the scheduler used to deliver observer events
-     * @return a new observable that observes on the given scheduler
+     * @param scheduler scheduler used for downstream notifications
+     * @return observable with scheduled observer callbacks
      */
     public Observable<T> observeOn(Scheduler scheduler) {
         Objects.requireNonNull(scheduler, "scheduler must not be null");
 
         return Observable.create(emitter ->
-                Observable.this.subscribe(new Observer<T>() {
+                Observable.this.subscribe(new Observer<>() {
                     @Override
                     public void onNext(T item) {
                         scheduler.execute(() -> {

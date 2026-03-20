@@ -6,29 +6,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Scheduler for CPU-bound computation tasks.
+ * Scheduler for CPU-intensive work.
  *
- * <p>This scheduler uses a fixed thread pool sized according to the number
- * of available processors. It is suitable for tasks that perform calculations
- * and do not spend much time waiting for external resources.
- *
- * <p>Threads are created as daemon threads so they do not prevent the JVM
- * from shutting down in demo and test scenarios.
+ * <p>Uses a fixed thread pool sized by the number of available processors.
  */
 public class ComputationScheduler implements Scheduler {
 
     /**
-     * Counter used to generate readable thread names.
+     * Counter for generated thread names.
      */
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger(1);
 
     /**
-     * Number of worker threads used for computation tasks.
+     * Number of worker threads for computation tasks.
      */
     private static final int THREAD_COUNT = Math.max(1, Runtime.getRuntime().availableProcessors());
 
     /**
-     * Executor used to run scheduled tasks.
+     * Executor used for scheduled tasks.
      */
     private final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT, task -> {
         Thread thread = new Thread(task);
@@ -38,9 +33,9 @@ public class ComputationScheduler implements Scheduler {
     });
 
     /**
-     * Schedules the given task on the computation thread pool.
+     * Schedules a task on the computation pool.
      *
-     * @param task the task to execute
+     * @param task task to execute
      */
     @Override
     public void execute(Runnable task) {

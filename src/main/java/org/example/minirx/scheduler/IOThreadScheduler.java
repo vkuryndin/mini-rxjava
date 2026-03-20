@@ -6,27 +6,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Scheduler for IO-related work.
+ * Scheduler intended for I/O-bound work.
  *
- * <p>This scheduler uses a cached thread pool, which is suitable for tasks that:
- * <ul>
- *     <li>may block,</li>
- *     <li>wait for external resources,</li>
- *     <li>perform file, network, or database operations.</li>
- * </ul>
- *
- * <p>Threads are created as daemon threads so they do not prevent the JVM
- * from shutting down in demo and test scenarios.
+ * <p>Uses a cached thread pool, which fits tasks that may block or spend
+ * time waiting on external resources.
  */
 public class IOThreadScheduler implements Scheduler {
 
     /**
-     * Counter used to generate readable thread names.
+     * Counter for generated thread names.
      */
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger(1);
 
     /**
-     * Executor used to run scheduled tasks.
+     * Executor used for scheduled tasks.
      */
     private final ExecutorService executor = Executors.newCachedThreadPool(task -> {
         Thread thread = new Thread(task);
@@ -36,9 +29,9 @@ public class IOThreadScheduler implements Scheduler {
     });
 
     /**
-     * Schedules the given task on the cached thread pool.
+     * Schedules a task on the cached pool.
      *
-     * @param task the task to execute
+     * @param task task to execute
      */
     @Override
     public void execute(Runnable task) {
