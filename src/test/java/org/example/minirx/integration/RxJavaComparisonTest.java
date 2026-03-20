@@ -241,11 +241,15 @@ public class RxJavaComparisonTest {
         AtomicBoolean completed = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<>();
 
-        io.reactivex.rxjava3.disposables.Disposable ignored = observable.subscribe(
+        io.reactivex.rxjava3.disposables.Disposable disposable = observable.subscribe(
                 items::add,
                 error::set,
                 () -> completed.set(true)
         );
+
+        if (!disposable.isDisposed()) {
+            disposable.dispose();
+        }
 
         return new ComparisonResult<>(items, completed.get(), error.get());
     }

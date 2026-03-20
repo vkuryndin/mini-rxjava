@@ -285,11 +285,15 @@ public class MetricsTest {
 
         long startNanos = System.nanoTime();
 
-        io.reactivex.rxjava3.disposables.Disposable ignored = observable.subscribe(
+        io.reactivex.rxjava3.disposables.Disposable disposable = observable.subscribe(
                 items::add,
                 error::set,
                 () -> completed.set(true)
         );
+
+        if (!disposable.isDisposed()) {
+            disposable.dispose();
+        }
 
         long durationNanos = System.nanoTime() - startNanos;
 

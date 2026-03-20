@@ -199,7 +199,7 @@ public class StressComparisonTest {
 
         long startNanos = System.nanoTime();
 
-        io.reactivex.rxjava3.disposables.Disposable ignored = observable.subscribe(
+        observable.blockingSubscribe(
                 items::add,
                 error::set,
                 () -> completed.set(true)
@@ -277,7 +277,7 @@ public class StressComparisonTest {
 
         long startNanos = System.nanoTime();
 
-        io.reactivex.rxjava3.disposables.Disposable ignored = observable.subscribe(
+        io.reactivex.rxjava3.disposables.Disposable disposable = observable.subscribe(
                 item -> {
                     if (firstObservedThread.get() == null) {
                         firstObservedThread.set(Thread.currentThread().getName());
@@ -294,7 +294,13 @@ public class StressComparisonTest {
                 }
         );
 
-        assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        try {
+            assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        } finally {
+            if (!disposable.isDisposed()) {
+                disposable.dispose();
+            }
+        }
 
         long durationNanos = System.nanoTime() - startNanos;
 
