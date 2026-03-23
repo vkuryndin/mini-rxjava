@@ -15,13 +15,8 @@ In this project I focused on the core concepts:
 - subscription cancellation with `Disposable`,
 - error handling through `onError(...)`.
 
-
 I did not try to reproduce the full complexity of real RxJava.  
 Instead, I implemented a smaller educational version that is easier to read, test, and explain.
-
-
-
-
 
 ---
 
