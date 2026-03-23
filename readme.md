@@ -17,6 +17,7 @@ In this project I focused on the core concepts:
 
 I did not try to reproduce the full complexity of real RxJava.  
 Instead, I implemented a smaller educational version that is easier to read, test, and explain.
+
 ---
 
 ## Task Coverage
