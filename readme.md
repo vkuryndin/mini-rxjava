@@ -4,20 +4,19 @@ Educational implementation of a simplified reactive streams library in Java.
 
 ## Project Goal
 
-The goal of this course work is to build a small educational analogue of RxJava and to understand the core ideas of reactive programming in practice:
+The goal of this course project is to implement a simplified version of RxJava and to understand the main ideas of reactive programming in practice.
 
-- the **Observer pattern**,
-- reactive data flow with **Observable** and **Observer**,
+In this project I focused on the core concepts:
+- the Observer pattern,
+- reactive data flow with `Observable` and `Observer`,
 - transformation operators such as `map`, `filter`, and `flatMap`,
-- asynchronous execution with **Schedulers**,
-- switching execution context with `subscribeOn(...)` and `observeOn(...)`,
-- subscription cancellation with **Disposable**,
-- error handling through `onError(...)`,
-- unit testing, comparison with real RxJava, and stress testing.
+- asynchronous execution with `Scheduler`,
+- thread switching with `subscribeOn(...)` and `observeOn(...)`,
+- subscription cancellation with `Disposable`,
+- error handling through `onError(...)`.
 
-This project is **not** intended to replace real RxJava.  
-It is a **learning-oriented implementation** focused on readability, correctness, and clear architecture.
-
+I did not try to reproduce the full complexity of real RxJava.  
+Instead, I implemented a smaller educational version that is easier to read, test, and explain.
 ---
 
 ## Task Coverage
@@ -116,11 +115,13 @@ mini-rxjava/
                         └── metrics/
                             └── MetricsTest.java
 ```
-
+---
 ## Architecture Overview
 
-The central architectural idea is that `Observable<T>` does not store emitted items directly.
-Instead, it stores subscription logic — code that should run when an observer subscribes.
+The main design idea of this project is that `Observable<T>` does not store data directly.
+Instead, it stores subscription logic, that is, code that should run when an observer subscribes.
+
+I chose this approach because it is close to the idea used in reactive libraries and at the same time simple enough for a course project. It also makes operators such as `map`, `filter`, and `flatMap` easier to implement as wrappers over the previous observable.
 
 ### Main flow
 `Observable.create(...) -> operators -> subscribe(observer) `
@@ -166,7 +167,7 @@ It allows the source to:
 
 ### `ObservableOnSubscribe<T>`
 `ObservableOnSubscribe<T>` is a functional interface that contains source logic:
-```java
+```text
 void subscribe(Emitter<T> emitter);
 ```
 
@@ -201,12 +202,15 @@ Its responsibilities:
 - ignore signals after terminal state
 - ignore signals after disposal
 
+---
 ## Implemented Operators
 
 ### map(...)
-`map(...)` transforms each item into another item.
+`map(...)` is the simplest transformation operator in the project.
+It takes one incoming item and converts it into another item.
+
 Example:
-```java
+```text
 Observable.<Integer>create(emitter -> {
 emitter.onNext(1);
 emitter.onNext(2);
@@ -227,9 +231,9 @@ emitter.onComplete();
 If the mapper throws an exception, it is forwarded to `onError(...)`.
 
 ### filter(...)
-`filter(...)` passes only those items that satisfy a condition.
+`filter(...)`  does not change the item type. It only decides whether an item should be passed further or skipped.
 
-```java
+```text
 .filter(number -> number % 2 == 0)
 ```
     Input:
@@ -250,7 +254,8 @@ If the predicate throws an exception, the stream terminates with `onError(...)`.
 `flatMap(...)` converts each item into an inner observable and merges all inner observables into one resulting stream.
 
 Example:
-```java
+
+```text
 .flatMap(number -> Observable.<Integer>create(innerEmitter -> {
     innerEmitter.onNext(number);
     innerEmitter.onNext(number * 10);
@@ -278,7 +283,8 @@ The implementation uses an `AtomicInteger` counter to track active sources:
 The resulting observable calls `onComplete()` only when:
 - the outer observable completes,
 - and all inner observables have also completed.
-
+- 
+---
 ## Schedulers
 
 ### Scheduler
@@ -313,7 +319,7 @@ It is useful when:
 
 This scheduler is especially useful for `observeOn(...)` in the educational implementation because it preserves a clear event order.
 
-## subscribeOn(...) and observeOn(...)
+### subscribeOn(...) and observeOn(...)
 These two operators are similar in appearance but have different purposes.
 
 ### subscribeOn(scheduler)
@@ -328,8 +334,9 @@ This means:
 - observer may receive `onNext(...)` and `onComplete()` on another thread.
 
 **Important note**
-In this educational implementation, `observeOn(...)` is most predictable with `SingleThreadScheduler`, because events are delivered sequentially on a single thread.
+In my educational implementation, `observeOn(...)` is most predictable with `SingleThreadScheduler`, because events are delivered sequentially on a single thread.
 
+---
 ## Error Handling
 Error handling is based on the reactive rule:
 - an error is delivered through `onError(...)`
@@ -343,6 +350,7 @@ Error handling is based on the reactive rule:
 - null errors are replaced with `NullPointerException`
 - signals after terminal state are ignored
 
+---
 ## Disposable and Subscription Cancellation
 `Disposable` allows a subscription to be cancelled.
 This is important when:
@@ -359,6 +367,7 @@ In the project:
 **Educational simplification**
 The current implementation does not include a full composite-disposable mechanism for all nested inner subscriptions. For the purposes of this course project, the implemented cancellation behavior is sufficient to demonstrate the concept.
 
+---
 ## Demo Scenarios
 `DemoMain.java` contains demonstration examples for:
 - simple successful stream
@@ -373,6 +382,7 @@ The current implementation does not include a full composite-disposable mechanis
 
 These demos were used for manual validation before and during test development.
 
+---
 ## Testing Strategy
 Testing was divided into several groups.
 
@@ -382,20 +392,20 @@ Testing was divided into several groups.
 - `FilterOperatorTest`
 - `FlatMapOperatorTest`
 
-These tests verify:
+These tests cover the basic behavior of the observable pipeline:
 - item delivery,
-- completion,
-- error handling,
-- operator semantics.
+- successful completion,
+- error propagation,
+- operator correctness.
 
 ### 2. Scheduler behavior
 - `SchedulerTest`
 
-These tests verify:
+This group focuses on thread-related behavior:
 - direct scheduler execution,
 - `subscribeOn(...)`,
 - `observeOn(...)`,
-- combined thread switching behavior.
+- combined thread switching.
 
 ### 3. Disposable and error handling
 - `DisposableTest`
@@ -447,30 +457,29 @@ These tests collect:
 - timing data,
 - scheduler behavior data,
 - stress/comparison information for report analysis.
-
+- 
+---
 ## Comparison with RxJava
-The project includes direct behavioral comparison with real RxJava.
 
-**Compared scenarios**
-- simple `create(...)`
-- `map(...)`
-- `filter(...)`
-- `flatMap(...)`
-- source error
-- mapper error
+To validate the behavior of Mini RxJava, I compared several scenarios with the real RxJava library.
 
-**Comparison principle**
-The goal was not to outperform RxJava, but to verify that Mini RxJava reproduces the same basic semantics in selected scenarios.
+The compared scenarios were:
+- simple `create(...)`,
+- `map(...)`,
+- `filter(...)`,
+- `flatMap(...)`,
+- source error,
+- mapper error.
 
-**Compared properties:**
-- emitted items
-- completion status
-- error type
-- error message
+For each scenario I compared:
+- emitted items,
+- completion status,
+- error type,
+- error message.
 
-**Result**
-In the tested scenarios, Mini RxJava produced the same observable behavior as RxJava. This means that, for the implemented feature set and tested scenarios, the educational implementation is semantically consistent with the reference library.
+In the tested scenarios, Mini RxJava produced the same observable behavior as RxJava. This was important for the project, because the main goal was not to build a faster library, but to reproduce the core semantics of reactive streams correctly.
 
+---
 ## Metrics and Evaluation
 The project includes both normal metrics and extended stress/comparison metrics.
 
@@ -494,12 +503,13 @@ They depend on:
 
 Therefore, the project report uses timing data carefully and does not make exaggerated performance claims.
 
+---
 ## Measured Results
 
 The following metrics were collected during test execution.
 
 ### Metrics: Map + Filter scenario
-```java
+```text
 Mini RxJava items count: 3333
 Mini RxJava completed: true
 Mini RxJava error type: null
@@ -514,7 +524,7 @@ RxJava duration (ns): 18957700
 ```
 
 ### Metrics: FlatMap scenario
-```java
+```text
 Mini RxJava items count:`
 Mini RxJava items count: 8
 Mini RxJava completed: true
@@ -530,7 +540,7 @@ RxJava duration (ns): 4470500
 ```
 
 ### Metrics: Scheduler scenario
-```java
+```text
 Mini RxJava items: [1, 2, 3]
 Mini RxJava completed: true
 Mini RxJava error type: null
@@ -542,7 +552,7 @@ Mini RxJava duration (ns): 10366700
 
 ### Metrics: Error scenario
 
-```java
+```text
 Mini RxJava items count: 1
 Mini RxJava completed: false
 Mini RxJava error type: IllegalStateException
@@ -557,7 +567,7 @@ RxJava duration (ns): 743800
 ```
 
 ### Stress Metrics: FlatMap expansion stress
-```java
+```text
 Mini RxJava items count: 15000
 Mini RxJava completed: true
 Mini RxJava error type: null
@@ -572,7 +582,7 @@ RxJava duration (ns): 35576800
 ```
 
 ### Stress Metrics: Large map + filter + map pipeline
-```java
+```text
 Mini RxJava items count: 20000
 Mini RxJava completed: true
 Mini RxJava error type: null
@@ -587,7 +597,7 @@ RxJava duration (ns): 10576700
 ```
 ### Stress Metrics: Scheduler stress scenario
 
-```java
+```text
 Mini RxJava items count:
 Mini RxJava items count: 20000
 Mini RxJava completed: true
@@ -603,7 +613,7 @@ RxJava error message: null
 RxJava first observed thread: RxSingleScheduler-1
 RxJava duration (ns): 93582900
 ```
-
+---
 ## Conclusions from Metrics
 
 ### Functional correctness
@@ -652,7 +662,7 @@ In contrast, the Scheduler stress scenario showed RxJava performing better in a 
 The main achievement of the project is semantic correctness, not raw performance superiority.
 Mini RxJava successfully reproduces the core behavior of RxJava in the selected educational scenarios.
 
-## Boundary, Robustness, and Concurrency Findings
+### Boundary, Robustness, and Concurrency Findings
 Additional robustness and race-condition-oriented tests were added.
 
 **Boundary and robustness checks confirmed:**
@@ -671,7 +681,7 @@ Additional robustness and race-condition-oriented tests were added.
 **Important limitation of interpretation:**
 These tests increase confidence, but they do not mathematically prove the absence of all race conditions. They are practical stress checks, not a formal proof of thread safety.
 
-## Limitations
+### Limitations
 This project intentionally remains a simplified educational implementation.
 
 **Current limitations:**
@@ -685,8 +695,11 @@ This project intentionally remains a simplified educational implementation.
 
 These limitations are acceptable for a course project whose goal is to understand the fundamentals of reactive programming and to build a working educational model.
 
+---
+
 ## Final Conclusion
-This project resulted in a working educational Mini RxJava library that implements the main ideas of reactive programming:
+
+As a result of this course project, I created a working educational Mini RxJava library that implements the main ideas of reactive programming:
 - Observer pattern
 - Observable creation
 - stream transformation with `map(...)`, `filter(...)`, and `flatMap(...)`
