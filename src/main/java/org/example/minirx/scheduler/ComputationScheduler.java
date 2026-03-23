@@ -12,33 +12,30 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ComputationScheduler implements Scheduler {
 
-    /**
-     * Counter for generated thread names.
-     */
-    private static final AtomicInteger THREAD_COUNTER = new AtomicInteger(1);
+  /** Counter for generated thread names. */
+  private static final AtomicInteger THREAD_COUNTER = new AtomicInteger(1);
 
-    /**
-     * Number of worker threads for computation tasks.
-     */
-    private static final int THREAD_COUNT = Math.max(1, Runtime.getRuntime().availableProcessors());
+  /** Number of worker threads for computation tasks. */
+  private static final int THREAD_COUNT = Math.max(1, Runtime.getRuntime().availableProcessors());
 
-    /**
-     * Executor used for scheduled tasks.
-     */
-    private final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT, task -> {
-        Thread thread = new Thread(task);
-        thread.setName("mini-rx-computation-" + THREAD_COUNTER.getAndIncrement());
-        thread.setDaemon(true);
-        return thread;
-    });
+  /** Executor used for scheduled tasks. */
+  private final ExecutorService executor =
+      Executors.newFixedThreadPool(
+          THREAD_COUNT,
+          task -> {
+            Thread thread = new Thread(task);
+            thread.setName("mini-rx-computation-" + THREAD_COUNTER.getAndIncrement());
+            thread.setDaemon(true);
+            return thread;
+          });
 
-    /**
-     * Schedules a task on the computation pool.
-     *
-     * @param task task to execute
-     */
-    @Override
-    public void execute(Runnable task) {
-        executor.execute(Objects.requireNonNull(task, "task must not be null"));
-    }
+  /**
+   * Schedules a task on the computation pool.
+   *
+   * @param task task to execute
+   */
+  @Override
+  public void execute(Runnable task) {
+    executor.execute(Objects.requireNonNull(task, "task must not be null"));
+  }
 }
