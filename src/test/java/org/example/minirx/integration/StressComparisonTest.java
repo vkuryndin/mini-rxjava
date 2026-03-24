@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
  *   <li>report-friendly timing collection.
  * </ul>
  *
- * <p>The tests do not require Mini RxJava to be faster than RxJava. They require semantic
- * correctness and collect timing information for analysis.
  */
 @SuppressWarnings("PMD.SystemPrintln") // suppress PMD warning about System.out.println()
 class StressComparisonTest {

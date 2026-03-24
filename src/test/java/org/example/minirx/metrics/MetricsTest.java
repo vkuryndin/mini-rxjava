@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
  *   <li>basic execution time measurement.
  * </ul>
  *
- * <p>It does not require Mini RxJava to be faster than RxJava. The goal is to measure and document
- * behavior, not to enforce production-grade performance.
  */
 @SuppressWarnings("PMD.SystemPrintln") // suppress PMD warning about System.out.println()
 class MetricsTest {
@@ -174,7 +172,6 @@ class MetricsTest {
   /**
    * Collects metrics for subscribeOn + observeOn behavior in Mini RxJava.
    *
-   * <p>This test focuses on scheduler semantics rather than direct time comparison with RxJava.
    *
    * @throws InterruptedException if the current thread is interrupted while waiting
    */

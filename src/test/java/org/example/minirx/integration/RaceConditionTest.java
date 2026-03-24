@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Test;
  * <p>These tests do not prove the absence of race conditions, but they help detect typical
  * concurrency issues under stress.
  *
- * <p>If such tests fail intermittently, that is an important signal that the implementation may
- * have a thread-safety problem.
  */
 class RaceConditionTest {
 
@@ -105,7 +103,6 @@ class RaceConditionTest {
   /**
    * Verifies that flatMap completion is signaled only once in a concurrent inner-stream scenario.
    *
-   * <p>If this test fails intermittently, it may indicate a terminal-state race.
    *
    * @throws InterruptedException if the current thread is interrupted while waiting
    */
